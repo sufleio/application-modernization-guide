@@ -1,0 +1,18 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "lambda-dynamodb"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-ov25wvq2gk04"
+s3_prefix = "lambda-dynamodb"
+region = "eu-west-1"
+capabilities = "CAPABILITY_IAM"
+
+[dev]
+[dev.deploy]
+[dev.deploy.parameters]
+stack_name = "lambda-dynamodb-app"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-ov25wvq2gk04"
+s3_prefix = "lambda-dynamodb-app"
+region = "eu-west-1"
+capabilities = "CAPABILITY_IAM"

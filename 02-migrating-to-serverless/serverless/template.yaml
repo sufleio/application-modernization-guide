@@ -1,0 +1,94 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  express app
+
+  SAM Template for migrated express app
+  
+Globals:
+  Function:
+    Timeout: 15
+
+Resources:
+  UserListFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: users/
+      Handler: handler.get
+      Runtime: nodejs14.x
+      Events:
+        Example:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /users
+            Method: get
+
+  UserCreateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: users/
+      Handler: handler.create
+      Runtime: nodejs14.x
+      Events:
+        Example:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /users
+            Method: post
+
+  UserDeleteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: users/
+      Handler: handler.delete
+      Runtime: nodejs14.x
+      Events:
+        Example:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /users
+            Method: delete
+  ProjectListFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: projects/list/
+      Handler: handler.list
+      Runtime: nodejs14.x
+      Events:
+        Example:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /projects
+            Method: get
+  ProjectCreateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: projects/create/
+      Handler: handler.create
+      Runtime: nodejs14.x
+      Events:
+        Example:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /projects
+            Method: post
+  ProjectUpdateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: projects/update/
+      Handler: handler.update
+      Runtime: nodejs14.x
+      Events:
+        Example:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /projects/{id}
+            Method: put
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  ExampleApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
