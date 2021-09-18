@@ -56,3 +56,37 @@ exports.detail = async (event, context) => {
     };
   }
 };
+
+exports.query = async (event, context) => {
+  try {
+    let params = {
+      TableName: "MyTable",
+      IndexName: "FindByTypeByName",
+      ExpressionAttributeNames: {
+        "#student_name": "name",
+        "#role_type": "type"
+      },
+      ExpressionAttributeValues: {
+        ":q": event.queryStringParameters.text,
+        ":role_type": "student",
+      },
+      KeyConditionExpression: "#role_type = :role_type and begins_with(#student_name, :q)",
+    };
+    const data = await ddbClient.query(params).promise();
+    return {
+      statusCode: 200,
+      body: JSON.stringify(data),
+    };
+
+    if (event.queryStringParameters.text) {
+  
+    }
+
+  } catch (ex) {
+    console.error(ex);
+    return {
+      statusCode: 500,
+      body: JSON.stringify(ex)
+    };
+  }
+};
