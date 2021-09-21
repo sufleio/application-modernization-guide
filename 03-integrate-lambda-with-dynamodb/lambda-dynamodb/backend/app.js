@@ -36,7 +36,6 @@ exports.create = async (event, context) => {
 exports.detail = async (event, context) => {
   try {
     const id = event.pathParameters.id;
-    console.log("id:", id);
     const item = await ddbClient
       .get({
         TableName: "MyTable",
@@ -77,16 +76,69 @@ exports.query = async (event, context) => {
       statusCode: 200,
       body: JSON.stringify(data),
     };
+  } catch (ex) {
+    console.error(ex);
+    return {
+      statusCode: 500
+    };
+  }
+};
 
-    if (event.queryStringParameters.text) {
-  
-    }
+exports.update = async (event, context) => {
+  try {
+    const id = event.pathParameters.id;
+    const body = JSON.parse(event.body);
+    const keys = Object.fromEntries(Object.entries(body).map(([k, v]) => [`#${k}`, k]));
+    const values = Object.fromEntries(Object.entries(body).map(([k, v]) => [`:${k}`, v]));
+    const updateExpression = Object.keys(body)
+      .map(key => `#${key} = :${key}`)
+      .reduce((left, right) => `${left}, ${right}`);
 
+    console.log("UPDATE", `set ${updateExpression}`, keys, values);
+    
+    const item = await ddbClient
+      .update({
+        TableName: "MyTable",
+        Key: {
+          PK: id
+        },
+        UpdateExpression: `set ${updateExpression}`,
+        ExpressionAttributeNames: keys,
+        ExpressionAttributeValues: values,
+        ReturnValues: "UPDATED_NEW"
+      })
+      .promise();
+    return {
+      statusCode: 200,
+      body: item.Attributes,
+    };
   } catch (ex) {
     console.error(ex);
     return {
       statusCode: 500,
-      body: JSON.stringify(ex)
+    };
+  }
+};
+
+exports.delete = async (event, context) => {
+  try {
+    const id = event.pathParameters.id;
+    await ddbClient
+      .delete({
+        TableName: "MyTable",
+        Key: {
+          PK: id,
+        },
+      })
+      .promise();
+    return {
+      statusCode: 200,
+      body: "",
+    };
+  } catch (ex) {
+    console.error(ex);
+    return {
+      statusCode: 500,
     };
   }
 };

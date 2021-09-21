@@ -76,6 +76,30 @@ Resources:
           Properties:
             Path: /query
             Method: get
+  UpdateFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: backend/
+      Handler: app.update
+      Runtime: nodejs14.x
+      Events:
+        Create:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /{id}
+            Method: put
+  DeleteFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: backend/
+      Handler: app.delete
+      Runtime: nodejs14.x
+      Events:
+        Create:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /{id}
+            Method: delete
 
   MyTableWriteAccessPolicy:
     Type: AWS::IAM::Policy
@@ -87,10 +111,14 @@ Resources:
           - Effect: Allow
             Action:
               - 'dynamodb:PutItem'
+              - 'dynamodb:UpdateItem'
+              - 'dynamodb:DeleteItem'
             Resource: !GetAtt MyTable.Arn
       Roles:
         # Which roles will have this policy
         - Ref: CreateFunctionRole
+        - Ref: UpdateFunctionRole
+        - Ref: DeleteFunctionRole
   MyTableReadAccessPolicy:
     Type: AWS::IAM::Policy
     Properties:
